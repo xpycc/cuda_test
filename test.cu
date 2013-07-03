@@ -1,17 +1,7 @@
 #include <stdio.h>
 
-__global__ void add(int a, int b, int *c) {
-	*c = a + b;
-}
-
 int main() {
 	int c;
-	int *dev_c;
-	cudaMalloc((void**)&dev_c, sizeof(int));
-	add<<<1, 1>>>(2, 7, dev_c);
-	cudaMemcpy(&c, dev_c, sizeof(int), cudaMemcpyDeviceToHost);
-	printf("2 + 7 = %d\n", c);
-	cudaFree(dev_c);
 	cudaGetDeviceCount(&c);
 	printf("cuda device count: %d\n", c);
 	for (int i = 0; i < c; ++i) {
@@ -24,9 +14,23 @@ int main() {
 		printf("Device copy overlap:  %s\n", prop.deviceOverlap ? "Enabled" : "Disabled");
 		printf("Kernel execution timeout:  %s\n", prop.kernelExecTimeoutEnabled ? "Enabled" : "Disabled");
 		printf("   --- Memory Information for device %d ---\n", i);
-		printf("Total global mem: %ld\n", prop.totalGlobalMem);
+		printf("Total global mem:  %ld\n", prop.totalGlobalMem);
+		printf("Total constant mem:  %ld\n", prop.totalConstMem);
+		printf("Max mem pitch:  %ld\n", prop.memPitch);
+		printf("Texture alignment:  %ld\n", prop.textureAlignment);
+		printf("   --- MP Information for device %d ---\n", i);
 		printf("Multiprocessor count:  %d\n", prop.multiProcessorCount);
+		printf("Shared mem per mp:  %ld\n", prop.sharedMemPerBlock);
+		printf("Registers per mp:  %d\n", prop.regsPerBlock);
 		printf("Threads in wrap:  %d\n", prop.warpSize);
+		printf("Max threads per block:  %d\n", prop.maxThreadsPerBlock);
+		printf("Max thread dimensions:  (%d, %d, %d)\n",
+				prop.maxThreadsDim[0], prop.maxThreadsDim[1],
+				prop.maxThreadsDim[2]);
+		printf("Max grid dimensions:  (%d, %d, %d)\n",
+				prop.maxGridSize[0], prop.maxGridSize[1],
+				prop.maxGridSize[2]);
+		puts("");
 	}
 	return 0;
 }

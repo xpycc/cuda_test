@@ -1,7 +1,7 @@
 all: test
 
 test: test.o
-	nvcc --link $^ -o $@
+	g++ -L/usr/local/cuda/lib64 -lcudart $^ -o $@
 
 test.o: test.cu
 	nvcc -c $^
